@@ -1,0 +1,26 @@
+Submission form answer prep:
+
+Achieved classification accuracy of the final trained model on both the official CIFAR-10
+training data set and the official CIFAR-10 test data set respectively.
+
+• the neural network architecture you designed
+
+I assume this is what is in the class NeuralNetwork() function defined, so perhaps it'll ask me about the layer stacks? so like 
+
+(0) in_features = x out_features = y
+(1) ReLU()
+(2) ….
+
+
+• the training process you have followed
+
+Im not sure what this wants, perhaps a description of how I adjusted the learning/step rate and number of epochs to improve accuracy without increasing time above the limit? 
+
+• the loss functions you have used
+
+This will probably be the cross entropy loss, so read up on how it works? **
+Maybe also the place to mention the optimiser?
+
+• the final trained model
+
+??
