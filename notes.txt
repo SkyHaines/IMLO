@@ -24,3 +24,16 @@ Maybe also the place to mention the optimiser?
 • the final trained model
 
 ??
+
+
+stuff on scheduler:
+https://medium.com/data-scientists-diary/guide-to-pytorch-learning-rate-scheduling-b5d2a42f56d4
+
+improve accuracy: 
+https://gurjeet333.medium.com/7-best-techniques-to-improve-the-accuracy-of-cnn-w-o-overfitting-6db06467182f
+already added: normalisation, augmentation, scheduling and adam
+could look into: batch normalisation, weight decay, gradient clipping
+https://www.geeksforgeeks.org/what-is-batch-normalization-in-cnn/
+
+
+
