@@ -9,8 +9,8 @@ model = MyCNN()
 loss = nn.CrossEntropyLoss()
 optimiser = torch.optim.Adam(model.parameters())
 
-trainedstate = torch.load("trainedmodel.pth", weights_only=False)
-model.load_state_dict(trainedstate['model_state_dict()'])
+trainedstate = torch.load("trainedmodel2.pth", weights_only=False)
+model.load_state_dict(trainedstate['model_state_dict'])
 optimiser.load_state_dict(trainedstate['optimiser_state_dict'])
 
 model.eval()

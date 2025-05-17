@@ -133,7 +133,7 @@ if __name__ == "__main__":
   train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
   test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
   
-  epochs = 40
+  epochs = 50
   
   for t in range(epochs):
       print(f"Epoch {t+1} \n-------------------------------")
@@ -142,5 +142,5 @@ if __name__ == "__main__":
       scheduler.step(validation_loss)
       print(f" Learning rate: {optimiser.param_groups[0]['lr']} \n")
   torch.save({'model_state_dict': model.state_dict(),
-              'optimiser_state_dict': optimiser.state_dict()}, "trainedmodel.pth")
+              'optimiser_state_dict': optimiser.state_dict()}, "trainedmodel2.pth")
   print("Done :) Saved trained model to trainedmodel.pth")
