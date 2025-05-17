@@ -7,39 +7,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
-train_transform = transforms.Compose(
-    [transforms.RandomHorizontalFlip(p=0.3),
-     transforms.RandomVerticalFlip(p=0.3),
-     transforms.RandomCrop(32, padding=3),
-     transforms.RandomRotation(degrees=20),
-     transforms.ColorJitter(0.3,0.3,0.3,0.1),
-     transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
-test_transform = transforms.Compose(
-    [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
-training_data = datasets.CIFAR10(
-    root="data",
-    train=True,
-    download=True,
-    transform=train_transform
-)
-
-test_data = datasets.CIFAR10(
-    root="data",
-    train=False,
-    download=True,
-    transform=test_transform
-)
-
-batch_size = 16
-
-train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
-test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
-
-device = "cpu"
 class MyCNN(nn.Module):
   def __init__(self):
     super().__init__()
@@ -91,13 +58,7 @@ class MyCNN(nn.Module):
     x = self.fc4(x)
     return x
 
-model = MyCNN().to(device)
-
-loss = nn.CrossEntropyLoss()
-optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimiser, mode='min', factor=0.5, patience=3, cooldown=2, threshold=0.05)
-
-def train(dataloader, model, loss_fn, optimiser):
+def train(dataloader, model, loss_fn, optimiser, device="cpu"):
   size = len(dataloader.dataset)
   model.train()
   for batch, (X, y) in enumerate(dataloader):
@@ -117,7 +78,7 @@ def train(dataloader, model, loss_fn, optimiser):
     
     
 
-def test(dataloader, model, loss_fn):
+def test(dataloader, model, loss_fn, device="cpu"):
   size = len(dataloader.dataset)
   num_batches = len(dataloader)
   model.eval()
@@ -134,13 +95,52 @@ def test(dataloader, model, loss_fn):
   print(f"Test error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} ")
   return test_loss
 
-epochs = 40
-for t in range(epochs):
-    print(f"Epoch {t+1} \n-------------------------------")
-    train(train_dataloader, model, loss, optimiser)
-    validation_loss = test(test_dataloader, model, loss)
-    scheduler.step(validation_loss)
-    print(f" Learning rate: {optimiser.param_groups[0]['lr']} \n")
-torch.save({'model_state_dict()': model.state_dict(),
-             'optimiser_state_dict': optimiser.state_dict()}, "trainedmodel.pth")
-print("Done :) Saved trained model to trainedmodel.pth")
+
+if __name__ == "__main__":
+  model = MyCNN().to(device="cpu")
+  loss = nn.CrossEntropyLoss()
+  optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
+  scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimiser, mode='min', factor=0.5, patience=3, cooldown=2, threshold=0.05)
+  
+  train_transform = transforms.Compose(
+    [transforms.RandomHorizontalFlip(p=0.3),
+     transforms.RandomVerticalFlip(p=0.3),
+     transforms.RandomCrop(32, padding=3),
+     transforms.RandomRotation(degrees=20),
+     transforms.ColorJitter(0.3,0.3,0.3,0.1),
+     transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+  test_transform = transforms.Compose(
+    [transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+  training_data = datasets.CIFAR10(
+    root="data",
+    train=True,
+    download=True,
+    transform=train_transform
+  )
+
+  test_data = datasets.CIFAR10(
+    root="data",
+    train=False,
+    download=True,
+    transform=test_transform
+  )
+
+  batch_size = 16
+  train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
+  test_dataloader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
+  
+  epochs = 40
+  
+  for t in range(epochs):
+      print(f"Epoch {t+1} \n-------------------------------")
+      train(train_dataloader, model, loss, optimiser)
+      validation_loss = test(test_dataloader, model, loss)
+      scheduler.step(validation_loss)
+      print(f" Learning rate: {optimiser.param_groups[0]['lr']} \n")
+  torch.save({'model_state_dict': model.state_dict(),
+              'optimiser_state_dict': optimiser.state_dict()}, "trainedmodel.pth")
+  print("Done :) Saved trained model to trainedmodel.pth")
